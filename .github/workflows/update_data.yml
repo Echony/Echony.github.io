@@ -1,0 +1,44 @@
+name: Update Data
+
+on:
+  schedule:
+    - cron: "*/5 * * * *" # 每5分钟运行一次
+  workflow_dispatch: # 手动触发的选项
+
+jobs:
+  update_data_job:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: "3.x"
+
+      - name: Install MySQL client
+        run: sudo apt-get install -y mysql-client
+
+      - name: Query MySQL and generate JSON
+        env:
+          DB_HOST: ${{ secrets.DB_HOST }}
+          DB_PORT: ${{ secrets.DB_PORT }}
+          DB_USER: ${{ secrets.DB_USER }}
+          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          DB_NAME: ${{ secrets.DB_NAME }}
+        run: |
+          # 创建查询语句
+          QUERY="SELECT * FROM test1.material_data ORDER BY record_date DESC LIMIT 100"
+
+          # 执行查询并输出为 JSON 文件
+          mysql --host="$DB_HOST" --port="$DB_PORT" --user="$DB_USER" --password="$DB_PASSWORD" "$DB_NAME" -e "$QUERY" --batch --raw --skip-column-names | \
+          jq -R -s 'split("\n")[:-1] | map(split("\t")) | map({"ID": .[0], "overall_impressions": .[1] | tonumber, "overall_clicks": .[2] | tonumber, "overall_ctr": .[3] | tonumber, "overall_conversion_rate": .[4] | tonumber, "overall_orders": .[5] | tonumber, "overall_sales": .[6] | tonumber, "overall_spend": .[7] | tonumber, "spend_percentage": .[8] | tonumber, "basic_spend": .[9] | tonumber, "roi": .[10] | tonumber, "cost_per_order": .[11] | tonumber, "record_date": .[12]})' > data.json
+
+      - name: Commit and push JSON file
+        run: |
+          git config --global user.name "GitHub Actions"
+          git config --global user.email "actions@github.com"
+          git add data.json
+          git commit -m "Update data.json with latest database data"
+          git push
