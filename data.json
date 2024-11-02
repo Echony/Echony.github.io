@@ -1,0 +1,62 @@
+[
+  {
+    "ID": "7427729544772534308",
+    "overall_impressions": 8,
+    "overall_clicks": 0,
+    "overall_ctr": 0,
+    "overall_conversion_rate": 0,
+    "overall_orders": 0,
+    "overall_sales": 0,
+    "overall_spend": 0,
+    "spend_percentage": 0,
+    "basic_spend": 0,
+    "roi": 0,
+    "cost_per_order": 0,
+    "record_date": "2024-10-30 09:36:18"
+  },
+  {
+    "ID": "7386665873472192562",
+    "overall_impressions": 1794,
+    "overall_clicks": 134,
+    "overall_ctr": 0.0747,
+    "overall_conversion_rate": 0.0149,
+    "overall_orders": 2,
+    "overall_sales": 848,
+    "overall_spend": 450.72,
+    "spend_percentage": 0.0079,
+    "basic_spend": 302.94,
+    "roi": 1.88,
+    "cost_per_order": 225.36,
+    "record_date": "2024-10-30 09:36:15"
+  },
+  {
+    "ID": "7369529536700694578",
+    "overall_impressions": 29591,
+    "overall_clicks": 909,
+    "overall_ctr": 0.0307,
+    "overall_conversion_rate": 0.0429,
+    "overall_orders": 39,
+    "overall_sales": 10858.4,
+    "overall_spend": 6396.32,
+    "spend_percentage": 0.1126,
+    "basic_spend": 6276.58,
+    "roi": 1.82,
+    "cost_per_order": 164.01,
+    "record_date": "2024-10-30 09:36:12"
+  },
+  {
+    "ID": "7363574882758524978",
+    "overall_impressions": 29591,
+    "overall_clicks": 909,
+    "overall_ctr": 0.0307,
+    "overall_conversion_rate": 0.0429,
+    "overall_orders": 39,
+    "overall_sales": 10858.4,
+    "overall_spend": 6396.32,
+    "spend_percentage": 0.1126,
+    "basic_spend": 6276.58,
+    "roi": 1.82,
+    "cost_per_order": 164.01,
+    "record_date": "2024-10-30 09:36:09"
+  }
+]
