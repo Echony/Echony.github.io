@@ -4,6 +4,19 @@
   
   
   <entry>
+    <title>数据展示</title>
+    <link href="/2024/11/02/data-display/"/>
+    <url>/2024/11/02/data-display/</url>
+    
+    <content type="html"><![CDATA[<div id="data-container">  <h2>数据展示</h2>  <!-- 最新数据将显示在这里 --></div><div id="chart-container">  <h2>ROI 变化趋势</h2>  <canvas id="roiChart"></canvas></div>]]></content>
+    
+    
+    
+  </entry>
+  
+  
+  
+  <entry>
     <title>Hello World</title>
     <link href="/2024/11/01/hello-world/"/>
     <url>/2024/11/01/hello-world/</url>
