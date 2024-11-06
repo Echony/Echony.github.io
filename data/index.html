@@ -53,6 +53,10 @@
 
 <!-- 自定义样式保持在最底部 -->
 
+  
+<link rel="stylesheet" href="/css/data.css">
+
+
 
   <script id="fluid-configs">
     var Fluid = window.Fluid || {};
@@ -64,7 +68,7 @@
 
 
 <body>
-  <header style="height: 60vh;">
+  <header style="height: 100vh;">
     <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
   <div class="container">
     <a class="navbar-brand"
@@ -109,9 +113,9 @@
           
           
             <li class="nav-item">
-              <a class="nav-link" href="/data-dashboard/">
-                
-                数据面板
+              <a class="nav-link" href="/data/">
+                <i class="iconfont icon-stats"></i>
+                数据
               </a>
             </li>
           
@@ -134,7 +138,7 @@
 </nav>
 
     <div class="banner" id="banner" parallax=true
-         style="background: url('/img/default.png') no-repeat center center;
+         style="background: url('/img/22.png') no-repeat center center;
            background-size: cover;">
       <div class="full-bg-img">
         <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
@@ -147,6 +151,10 @@
           </div>
 
           
+            <div class="scroll-down-bar">
+              <i class="iconfont icon-arrowdown"></i>
+            </div>
+          
         </div>
       </div>
     </div>
@@ -156,164 +164,133 @@
     
       <div class="container nopadding-x-md">
         <div class="py-5" id="board"
-          >
+          style=margin-top:0>
           
           <div class="container">
             <div class="row">
               <div class="col-12 col-md-10 m-auto">
                 
 
-<article class="page-content">
-  <div id="dashboard-container">
-  <div class="loading-indicator">加载中...</div>
-  <div class="data-cards">
-    <div class="data-card" id="roi-card">
-      <h3>ROI指标</h3>
-      <div class="value" id="current-roi">--</div>
-      <div class="chart" id="roi-chart"></div>
-    </div>
-    <div class="data-card" id="sales-card">
-      <h3>销售数据</h3>
-      <div class="value" id="current-sales">--</div>
-      <div class="chart" id="sales-chart"></div>
-    </div>
-  </div>
-</div>
-
-<style>
-.data-cards {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 20px;
-  margin: 20px 0;
-}
-
-.data-card {
-  background: #fff;
-  border-radius: 8px;
-  padding: 20px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-}
-
-.value {
-  font-size: 24px;
-  font-weight: bold;
-  color: #333;
-  margin: 10px 0;
-}
-
-.chart {
-  height: 200px;
-  margin-top: 10px;
-}
-
-.loading-indicator {
-  text-align: center;
-  padding: 20px;
-  font-size: 18px;
-  color: #666;
-}
-</style>
-
-<!-- 引入必要的库 -->
-<script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-  // 初始化图表
-  const roiChart = echarts.init(document.getElementById('roi-chart'));
-  const salesChart = echarts.init(document.getElementById('sales-chart'));
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/tou.png">
+  <link rel="icon" href="/img/tou.png">
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
   
-  // 响应式处理
-  window.addEventListener('resize', function() {
-    roiChart.resize();
-    salesChart.resize();
-  });
+    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="description" content="">
+  <meta name="author" content="Alan_Shuai">
+  <meta name="keywords" content="">
+  
+  <title>数据监控面板 - WEILAI</title>
 
-  // 更新数据的函数
-  async function updateData() {
-    try {
-      const response = await fetch('https://raw.githubusercontent.com/Echony/echony-data-storage/main/data/latest/metrics.json');
-      const data = await response.json();
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css" />
+
+
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/github-markdown-css@4.0.0/github-markdown.min.css" />
+  <link  rel="stylesheet" href="/lib/hint/hint.min.css" />
+
+  
+    
+    
       
-      if (data && data.data && data.data.length > 0) {
-        // 更新显示值
-        document.getElementById('current-roi').textContent = 
-          data.data[0].roi.toFixed(2) + '%';
-        document.getElementById('current-sales').textContent = 
-          '¥' + data.data[0].overall_sales.toFixed(2);
-
-        // 准备图表数据
-        const timeData = data.data.map(item => item.record_date);
-        const roiData = data.data.map(item => item.roi);
-        const salesData = data.data.map(item => item.overall_sales);
-
-        // 更新ROI图表
-        roiChart.setOption({
-          tooltip: {
-            trigger: 'axis'
-          },
-          xAxis: {
-            type: 'category',
-            data: timeData.reverse(),
-            axisLabel: {
-              rotate: 45
-            }
-          },
-          yAxis: {
-            type: 'value',
-            name: 'ROI (%)'
-          },
-          series: [{
-            data: roiData.reverse(),
-            type: 'line',
-            smooth: true,
-            areaStyle: {}
-          }]
-        });
-
-        // 更新销售图表
-        salesChart.setOption({
-          tooltip: {
-            trigger: 'axis'
-          },
-          xAxis: {
-            type: 'category',
-            data: timeData,
-            axisLabel: {
-              rotate: 45
-            }
-          },
-          yAxis: {
-            type: 'value',
-            name: '销售额 (¥)'
-          },
-          series: [{
-            data: salesData,
-            type: 'line',
-            smooth: true,
-            areaStyle: {}
-          }]
-        });
-
-        // 隐藏加载指示器
-        document.querySelector('.loading-indicator').style.display = 'none';
-      }
-    } catch (error) {
-      console.error('Error fetching data:', error);
-    }
-  }
-
-  // 首次更新数据
-  updateData();
-
-  // 每5分钟更新一次数据
-  setInterval(updateData, 5 * 60 * 1000);
-});
-</script>
+      <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@10.4.0/styles/github-gist.min.css" />
+    
+  
 
   
-</article>
 
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_ba1fz6golrf.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_kmeydafke9r.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+<!-- 自定义样式保持在最底部 -->
+
+  
+<link rel="stylesheet" href="/css/data.css">
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    var CONFIG = {"hostname":"yoursite.com","root":"/","version":"1.8.9","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"right","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"copy_btn":true,"image_zoom":{"enable":true},"toc":{"enable":true,"headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null}}};
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+</head>
+
+
+    <div class="data-container container-fluid">
+        <div class="row">
+            <div class="col-12">
+                <!-- 状态筛选区域 -->
+                <div class="status-filter mt-4 mb-4">
+                    <div class="status-buttons d-flex flex-wrap" id="statusButtons">
+                        <!-- 状态按钮将由 JS 动态生成 -->
+                    </div>
+                </div>
+
+                <!-- 搜索和数据展示区域 -->
+                <div class="data-content">
+                    <div class="search-bar mb-4">
+                        <input type="text" class="search-input" placeholder="请输入素材ID搜索..." id="searchInput" />
+                    </div>
+                    <div class="data-table">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>素材ID</th>
+                                    <th>素材状态</th>
+                                    <th>整体展现次数</th>
+                                    <th>整体点击次数</th>
+                                    <th>整体点击率</th>
+                                    <th>整体转化率</th>
+                                    <th>整体成交订单数</th>
+                                    <th>整体成交金额</th>
+                                    <th>整体消耗</th>
+                                    <th>整体消耗占比</th>
+                                    <th>基础消耗</th>
+                                    <th>整体支付ROI</th>
+                                    <th>整体成交订单成本</th>
+                                </tr>
+                            </thead>
+                            <tbody id="dataTableBody">
+                                <!-- 数据行将由 JS 动态生成 -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 添加深色模式切换按钮 -->
+    <div class="theme-toggle position-fixed" style="right: 20px; bottom: 20px;">
+        <button class="btn btn-outline-primary rounded-circle" id="themeToggle" style="width: 40px; height: 40px;">
+            <i class="iconfont icon-moon"></i>
+        </button>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+
+    <script>
+        // 将在下一步添加 JavaScript 代码
+    </script>
+
+    <script src="/js/data.js"></script>
               </div>
             </div>
           </div>
