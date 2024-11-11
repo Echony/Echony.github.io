@@ -22,7 +22,7 @@
   
   <title>数据监控面板 - WEILAI</title>
 
-  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css" />
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" />
 
 
   <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/github-markdown-css@4.0.0/github-markdown.min.css" />
@@ -188,7 +188,7 @@
   
   <title>数据监控面板 - WEILAI</title>
 
-  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css" />
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" />
 
 
   <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/github-markdown-css@4.0.0/github-markdown.min.css" />
@@ -233,21 +233,19 @@
 </head>
 
 
-    <div class="data-container container-fluid">
-        <div class="row">
-            <div class="col-12">
-                <!-- 状态筛选区域 -->
-                <div class="status-filter mt-4 mb-4">
-                    <div class="status-buttons d-flex flex-wrap" id="statusButtons">
-                        <!-- 状态按钮将由 JS 动态生成 -->
-                    </div>
-                </div>
-
-                <!-- 搜索和数据展示区域 -->
-                <div class="data-content">
-                    <div class="search-bar mb-4">
-                        <input type="text" class="search-input" placeholder="请输入素材ID搜索..." id="searchInput" />
-                    </div>
+    <div class="data-container">
+    
+        <div class="status-filter">
+            <h2 class="text-lg font-semibold mb-3">状态筛选</h2>
+            <div class="status-buttons" id="statusButtons">
+                <!-- 状态按钮由 JS 动态生成 -->
+            </div>
+        </div>
+    
+        <div class="data-content">
+            <div class="search-bar">
+                <input type="text" class="search-input" placeholder="输入素材ID搜索..." id="searchInput" />
+            </div>
                     <div class="data-table">
                         <table>
                             <thead>
@@ -358,7 +356,7 @@
 
 
 <script  src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.min.js" ></script>
-<script  src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.min.js" ></script>
+<script  src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.min.js" ></script>
 <script  src="/js/debouncer.js" ></script>
 <script  src="/js/events.js" ></script>
 <script  src="/js/plugins.js" ></script>

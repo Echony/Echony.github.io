@@ -125,44 +125,58 @@ function updateChart(data, metric1, metric2) {
 // 更新详细数据表格
 function updateDetailTable(data) {
     const tableBody = document.getElementById('detailTableBody');
+    
+    // 格式化百分比的函数
+    const formatPercentage = (value) => {
+        const percentage = value * 100;
+        return percentage < 1 ? '0%' : `${Math.round(percentage)}%`;
+    };
+    
     tableBody.innerHTML = data.map(item => `
         <tr>
             <td>${formatDate(item.record_date)}</td>
             <td>${item.status}</td>
             <td>${item.overall_impressions.toLocaleString()}</td>
             <td>${item.overall_clicks.toLocaleString()}</td>
-            <td>${item.overall_ctr}%</td>
-            <td>${item.overall_conversion_rate}%</td>
+            <td>${formatPercentage(item.overall_ctr)}</td>
+            <td>${formatPercentage(item.overall_conversion_rate)}</td>
             <td>${item.overall_orders}</td>
             <td>${item.overall_sales.toFixed(2)}</td>
             <td>${item.overall_spend.toFixed(2)}</td>
-            <td>${item.spend_percentage}%</td>
+            <td>${formatPercentage(item.spend_percentage)}</td>
             <td>${item.basic_spend.toFixed(2)}</td>
             <td>${item.roi.toFixed(2)}</td>
             <td>${item.cost_per_order.toFixed(2)}</td>
         </tr>
     `).join('');
 }
-
-// 格式化日期
+// 格式化日期（完整格式：用于表格显示）
 function formatDate(dateString) {
     const date = new Date(dateString);
     return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')} ${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}`;
 }
 
-// 格式化数值显示
+// 格式化数值显示// 格式化数值显示
 function formatValue(value, metric) {
     if (typeof value !== 'number') return '-';
     
+    // 处理百分比类型的数据
     if (metric.includes('percentage') || metric.includes('rate') || metric === 'ctr') {
-        return value.toFixed(2) + '%';
+        const percentage = value * 100;
+        return percentage < 1 ? '0%' : `${Math.round(percentage)}%`;
     }
+    
+    // 处理金额类型的数据
     if (metric.includes('spend') || metric.includes('sales') || metric === 'cost_per_order') {
         return '¥' + value.toFixed(2);
     }
+    
+    // 处理ROI
     if (metric === 'roi') {
         return value.toFixed(2);
     }
+    
+    // 处理其他数值类型
     return value.toLocaleString();
 }
 
@@ -220,3 +234,230 @@ async function initPage() {
 
 // 页面加载完成后初始化
 document.addEventListener('DOMContentLoaded', initPage);
+
+// 格式化日期（只显示时分：用于图表显示）
+function formatTimeOnly(dateString) {
+    const date = new Date(dateString);
+    return `${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}`;
+}
+
+// 更新趋势图表
+function updateChart(data, metric1, metric2) {
+    if (!chartInstance) {
+        chartInstance = echarts.init(document.getElementById('trendChart'));
+    }
+
+    const dates = data.map(item => formatTimeOnly(item.record_date));
+    const values1 = data.map(item => item[metric1]);
+    const values2 = data.map(item => item[metric2]);
+
+    // 图表配色方案
+    const colors = ['#3498db', '#2ecc71'];
+
+    const option = {
+        color: colors,
+        backgroundColor: 'transparent',
+        tooltip: {
+            trigger: 'axis',
+            axisPointer: {
+                type: 'line',
+                lineStyle: {
+                    color: '#666',
+                    width: 1,
+                    type: 'dashed'
+                }
+            },
+            backgroundColor: 'rgba(255, 255, 255, 0.9)',
+            borderColor: '#eee',
+            borderWidth: 1,
+            textStyle: {
+                color: '#333'
+            },
+            formatter: function(params) {
+                const date = new Date(data[params[0].dataIndex].record_date);
+                const fullDate = formatDate(date);
+                let result = `<div style="padding: 3px 6px;">
+                    <div style="margin-bottom: 4px;font-weight:bold;">${fullDate}</div>`;
+                params.forEach((param, index) => {
+                    result += `
+                        <div style="display:flex;justify-content:space-between;align-items:center;min-width:180px;">
+                            <span>
+                                <span style="display:inline-block;width:10px;height:10px;border-radius:50%;background-color:${colors[index]};margin-right:6px;"></span>
+                                ${param.seriesName}
+                            </span>
+                            <span style="font-weight:bold;">${formatValue(param.value, param.seriesName.includes('率') || param.seriesName.includes('比') ? 'percentage' : 'number')}</span>
+                        </div>`;
+                });
+                result += '</div>';
+                return result;
+            }
+        },
+        legend: {
+            data: [metricLabels[metric1], metricLabels[metric2]],
+            icon: 'circle',
+            textStyle: {
+                fontSize: 12
+            },
+            itemGap: 25,
+            top: 0
+        },
+        grid: {
+            left: '3%',
+            right: '4%',
+            bottom: '8%',
+            top: '8%',
+            containLabel: true
+        },
+        xAxis: {
+            type: 'category',
+            data: dates,
+            boundaryGap: false,
+            axisLine: {
+                lineStyle: {
+                    color: '#ddd'
+                }
+            },
+            axisTick: {
+                show: false
+            },
+            axisLabel: {
+                rotate: 45,
+                margin: 12,
+                color: '#666',
+                fontSize: 11
+            },
+            splitLine: {
+                show: true,
+                lineStyle: {
+                    color: ['#f5f5f5'],
+                    width: 1,
+                    type: 'dashed'
+                }
+            }
+        },
+        yAxis: [
+            {
+                type: 'value',
+                name: metricLabels[metric1],
+                position: 'left',
+                nameTextStyle: {
+                    color: colors[0],
+                    fontSize: 12,
+                    padding: [0, 0, 0, -50]  // 调整名称位置
+                },
+                axisLine: {
+                    show: true,
+                    lineStyle: {
+                        color: colors[0]
+                    }
+                },
+                axisTick: {
+                    show: false
+                },
+                axisLabel: {
+                    color: '#666',
+                    fontSize: 11,
+                    formatter: function(value) {
+                        return formatValue(value, metric1.includes('rate') || metric1.includes('percentage') ? 'percentage' : 'number');
+                    }
+                },
+                splitLine: {
+                    lineStyle: {
+                        color: ['#f5f5f5'],
+                        type: 'dashed'
+                    }
+                }
+            },
+            {
+                type: 'value',
+                name: metricLabels[metric2],
+                position: 'right',
+                nameTextStyle: {
+                    color: colors[1],
+                    fontSize: 12,
+                    padding: [0, -50, 0, 0]  // 调整名称位置
+                },
+                axisLine: {
+                    show: true,
+                    lineStyle: {
+                        color: colors[1]
+                    }
+                },
+                axisTick: {
+                    show: false
+                },
+                axisLabel: {
+                    color: '#666',
+                    fontSize: 11,
+                    formatter: function(value) {
+                        return formatValue(value, metric2.includes('rate') || metric2.includes('percentage') ? 'percentage' : 'number');
+                    }
+                },
+                splitLine: {
+                    show: false
+                }
+            }
+        ],
+        series: [
+            {
+                name: metricLabels[metric1],
+                type: 'line',
+                data: values1,
+                yAxisIndex: 0,
+                smooth: true,
+                symbol: 'circle',
+                symbolSize: 8,
+                lineStyle: {
+                    width: 3,
+                    shadowColor: 'rgba(52,152,219,0.3)',
+                    shadowBlur: 10
+                },
+                itemStyle: {
+                    borderWidth: 2,
+                    borderColor: '#fff'
+                },
+                areaStyle: {
+                    color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                        { offset: 0, color: 'rgba(52,152,219,0.3)' },
+                        { offset: 1, color: 'rgba(52,152,219,0.1)' }
+                    ])
+                }
+            },
+            {
+                name: metricLabels[metric2],
+                type: 'line',
+                data: values2,
+                yAxisIndex: 1,
+                smooth: true,
+                symbol: 'circle',
+                symbolSize: 8,
+                lineStyle: {
+                    width: 3,
+                    shadowColor: 'rgba(46,204,113,0.3)',
+                    shadowBlur: 10
+                },
+                itemStyle: {
+                    borderWidth: 2,
+                    borderColor: '#fff'
+                },
+                areaStyle: {
+                    color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                        { offset: 0, color: 'rgba(46,204,113,0.3)' },
+                        { offset: 1, color: 'rgba(46,204,113,0.1)' }
+                    ])
+                }
+            }
+        ]
+    };
+
+    chartInstance.setOption(option);
+}
+
+// 添加数值格式化函数
+function formatValue(value, type) {
+    if (type === 'percentage') {
+        const percentage = Number(value) * 100;
+        return percentage < 1 ? '0%' : `${Math.round(percentage)}%`;
+    }
+    return value.toLocaleString();
+}

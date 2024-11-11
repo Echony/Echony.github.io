@@ -65,11 +65,11 @@ async function loadDataByStatus(status) {
 }
 
 // 更新表格数据
+// 更新表格数据
 async function updateTable(materials) {
     const tableBody = document.getElementById('dataTableBody');
     tableBody.innerHTML = ''; // 清空现有数据
 
-    // 为每个素材获取详细数据
     for (const material of materials) {
         try {
             const response = await fetch(`https://raw.githubusercontent.com/Echony/echony-data-storage/main/data/ids/${material.id}.json`);
@@ -78,6 +78,12 @@ async function updateTable(materials) {
             // 使用最新的数据记录
             const latestData = detailData.data[0];
             
+            // 格式化百分比数据的函数
+            const formatPercentage = (value) => {
+                const percentage = value * 100;
+                return percentage < 1 ? '0%' : `${Math.round(percentage)}%`;
+            };
+            
             // 创建表格行
             const row = document.createElement('tr');
             row.innerHTML = `
@@ -85,12 +91,12 @@ async function updateTable(materials) {
                 <td>${material.current_status}</td>
                 <td>${latestData.overall_impressions.toLocaleString()}</td>
                 <td>${latestData.overall_clicks.toLocaleString()}</td>
-                <td>${latestData.overall_ctr}%</td>
-                <td>${latestData.overall_conversion_rate}%</td>
+                <td>${formatPercentage(latestData.overall_ctr)}</td>
+                <td>${formatPercentage(latestData.overall_conversion_rate)}</td>
                 <td>${latestData.overall_orders}</td>
                 <td>${latestData.overall_sales.toFixed(2)}</td>
                 <td>${latestData.overall_spend.toFixed(2)}</td>
-                <td>${latestData.spend_percentage}%</td>
+                <td>${formatPercentage(latestData.spend_percentage)}</td>
                 <td>${latestData.basic_spend.toFixed(2)}</td>
                 <td>${latestData.roi.toFixed(2)}</td>
                 <td>${latestData.cost_per_order.toFixed(2)}</td>
